@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#0a0f1e" />
+<meta name="color-scheme" content="dark" />
+<title>Codea — Customer Manager</title>
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" type="image/png" href="icons/icon-192.png" />
+<link rel="apple-touch-icon" href="icons/icon-192.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+<!-- SVG icon symbols -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-3.13a4 4 0 100-8 4 4 0 000 8zm6 0a4 4 0 100-8"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></symbol>
+  <symbol id="i-logout" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 01-2 2H9a2 2 0 01-2-2L5 6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></symbol>
+  <symbol id="i-save" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></symbol>
+</svg>
+
+<!-- ============ LOGIN SCREEN ============ -->
+<div id="loginScreen" class="screen login-screen">
+  <div class="login-card">
+    <div class="brand">
+      <img src="icons/logo.png" alt="Codea" class="brand-logo" onerror="this.style.display='none'"/>
+      <p class="tagline">Customer Manager</p>
+    </div>
+    <form id="loginForm">
+      <input type="text" id="loginUser" placeholder="Username" autocomplete="username" required />
+      <input type="password" id="loginPass" placeholder="Password" autocomplete="current-password" required />
+      <button type="submit" class="btn primary block">Sign In</button>
+      <p class="hint">Default: <b>admin</b> / <b>codea123</b> (change in Settings)</p>
+    </form>
+  </div>
+</div>
+
+<!-- ============ MAIN APP ============ -->
+<div id="app" class="screen" style="display:none">
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <img src="icons/logo.png" alt="Codea" class="topbar-logo" onerror="this.style.display='none'"/>
+      <div style="flex:1;display:flex;flex-direction:column;min-width:0">
+        <h1 id="pageTitle">Dashboard</h1>
+        <span id="syncStatus" style="font-size:10px;font-weight:600;letter-spacing:0.05em;line-height:1;margin-top:2px;color:#6b7896"></span>
+      </div>
+      <button id="logoutBtn" class="icon-btn" title="Logout">
+        <svg width="18" height="18"><use href="#i-logout"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ---- DASHBOARD ---- -->
+  <section id="dashboardView" class="view">
+    <div class="stats-grid">
+      <div class="stat-card blue">
+        <div class="stat-label">Customers</div>
+        <div class="stat-value" id="statCustomers">0</div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-label">Received</div>
+        <div class="stat-value" id="statReceived">$0</div>
+      </div>
+      <div class="stat-card orange">
+        <div class="stat-label">Owed</div>
+        <div class="stat-value" id="statOwed">$0</div>
+      </div>
+      <div class="stat-card purple">
+        <div class="stat-label">Total Sales</div>
+        <div class="stat-value" id="statTotal">$0</div>
+      </div>
+    </div>
+
+    <div class="profit-hero">
+      <div class="profit-hero-inner">
+        <div class="profit-block today">
+          <div class="profit-label">Today's Profit</div>
+          <div class="profit-value" id="statProfitToday">$0</div>
+          <div class="profit-sub" id="statProfitTodaySub">0 items sold today</div>
+        </div>
+        <div class="profit-block total">
+          <div class="profit-label">All-Time Profit</div>
+          <div class="profit-value" id="statProfitTotal">$0</div>
+          <div class="profit-sub" id="statProfitTotalSub">0% avg margin</div>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="section-title">Daily Profit — Last 14 Days</h2>
+    <div class="chart-wrap">
+      <canvas id="profitChart" width="600" height="180"></canvas>
+    </div>
+
+    <h2 class="section-title">Top-Selling Items</h2>
+    <div id="topItemsList" class="list"></div>
+
+    <h2 class="section-title">Recent Customers</h2>
+    <div id="recentList" class="list"></div>
+  </section>
+
+  <!-- ---- CUSTOMERS LIST ---- -->
+  <section id="customersView" class="view" style="display:none">
+    <div class="search-bar">
+      <input type="search" id="searchInput" placeholder="Search by name or phone..." />
+    </div>
+    <div id="customerList" class="list"></div>
+  </section>
+
+  <!-- ---- ADD / EDIT CUSTOMER ---- -->
+  <section id="formView" class="view" style="display:none">
+    <form id="customerForm" class="form">
+      <input type="hidden" id="customerId" />
+
+      <label>Items (photos with cost &amp; price) <span id="photoCount" class="count-badge">0 / 10</span></label>
+      <p class="hint" style="text-align:left;margin:0 0 10px;color:var(--text-3)">Each photo is one item. Cost = what you paid. Retail = what customer paid. Profit auto-calculated.</p>
+      <div class="items-summary" id="itemsSummary" style="display:none"></div>
+      <div class="photo-grid" id="photoGrid"></div>
+      <div class="upload-btn" id="addPhotoBtn">
+        <input type="file" id="photoInput" accept="image/*" multiple />
+        <svg width="22" height="22" style="opacity:.7"><use href="#i-camera"/></svg>
+        <span>Add items (up to 10 photos)</span>
+      </div>
+
+      <label>Files <span id="fileCount" class="count-badge">0 / 5</span></label>
+      <div class="file-list" id="fileList"></div>
+      <div class="upload-btn" id="addFileBtn">
+        <input type="file" id="fileInput" multiple />
+        <svg width="22" height="22" style="opacity:.7"><use href="#i-doc"/></svg>
+        <span>Add files (PDF, docs, up to 5)</span>
+      </div>
+
+      <label>Customer Name *</label>
+      <input type="text" id="fName" required />
+
+      <label>Phone / Contact</label>
+      <input type="tel" id="fPhone" placeholder="+1 234 567 890" />
+
+      <label>Service / Product Description</label>
+      <textarea id="fService" rows="2"></textarea>
+
+      <div class="row">
+        <div class="col">
+          <label>Total Price <span style="font-size:9px;color:var(--text-3);text-transform:none;font-weight:500">(auto from items)</span></label>
+          <input type="number" id="fTotal" step="0.01" min="0" value="0" />
+        </div>
+        <div class="col">
+          <label>Received</label>
+          <input type="number" id="fReceived" step="0.01" min="0" value="0" />
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <label>Remaining</label>
+          <input type="text" id="fRemaining" readonly />
+        </div>
+        <div class="col">
+          <label>Status</label>
+          <input type="text" id="fStatus" readonly />
+        </div>
+      </div>
+
+      <label>Payment Date (for initial or edited amount)</label>
+      <input type="date" id="fDate" />
+
+      <label>Notes</label>
+      <textarea id="fNotes" rows="3"></textarea>
+
+      <div class="form-actions">
+        <button type="button" id="cancelBtn" class="btn ghost">Cancel</button>
+        <button type="submit" class="btn primary">
+          <svg width="16" height="16" style="vertical-align:-3px;margin-right:6px"><use href="#i-save"/></svg>
+          Save
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <!-- ---- CUSTOMER DETAIL ---- -->
+  <section id="detailView" class="view" style="display:none">
+    <div id="detailContent"></div>
+  </section>
+
+  <!-- ---- SETTINGS ---- -->
+  <section id="settingsView" class="view" style="display:none">
+    <div class="settings">
+      <h2>Settings</h2>
+
+      <label>Database URL</label>
+      <input type="url" id="dbUrl" placeholder="https://your-project.firebaseio.com/" />
+      <p class="hint" style="text-align:left;margin:6px 0 8px">Firebase Realtime DB or any REST endpoint. Leave empty for on-device only.</p>
+
+      <label>Firebase Storage Bucket</label>
+      <input type="text" id="storageBucket" placeholder="codea-b9d61.appspot.com" />
+      <p class="hint" style="text-align:left;margin:6px 0 8px">Enables cloud photo &amp; file uploads. Get this from Firebase Console → Storage.</p>
+
+      <button type="button" id="testConnBtn" class="btn ghost block" style="margin-top:4px">
+        <svg width="15" height="15" style="vertical-align:-3px;margin-right:6px"><use href="#i-search"/></svg>
+        Test Connection
+      </button>
+      <p id="connResult" class="hint" style="text-align:left;margin:8px 0 0;min-height:16px"></p>
+
+      <h3>Sync</h3>
+      <button type="button" onclick="forceSyncNow()" class="btn primary block">
+        <svg width="15" height="15" style="vertical-align:-3px;margin-right:6px"><use href="#i-upload"/></svg>
+        Push local → Firebase
+      </button>
+      <button type="button" onclick="forcePullNow()" class="btn ghost block">
+        <svg width="15" height="15" style="vertical-align:-3px;margin-right:6px"><use href="#i-download"/></svg>
+        Pull Firebase → local
+      </button>
+      <p class="hint" style="text-align:left;margin:6px 0 0">Use <b>Push</b> if the app shows a sync error. Use <b>Pull</b> to reload data on a new device.</p>
+
+      <label>Currency Symbol</label>
+      <input type="text" id="currencySym" maxlength="3" value="$" />
+
+      <h3>Change Password</h3>
+      <input type="text" id="newUser" placeholder="New username" style="margin-bottom:10px" />
+      <input type="password" id="newPass" placeholder="New password" />
+
+      <h3>Data</h3>
+      <button id="exportBtn" class="btn ghost block">
+        <svg width="16" height="16" style="vertical-align:-3px;margin-right:6px"><use href="#i-download"/></svg>
+        Export All Data
+      </button>
+      <button id="importBtn" class="btn ghost block">
+        <svg width="16" height="16" style="vertical-align:-3px;margin-right:6px"><use href="#i-upload"/></svg>
+        Import Data
+      </button>
+      <input type="file" id="importFile" accept="application/json" style="display:none" />
+      <button id="clearBtn" class="btn danger block">
+        <svg width="16" height="16" style="vertical-align:-3px;margin-right:6px"><use href="#i-trash"/></svg>
+        Clear All Data
+      </button>
+
+      <button id="saveSettingsBtn" class="btn primary block" style="margin-top:24px">Save Settings</button>
+    </div>
+  </section>
+
+  <!-- Floating Add button -->
+  <button id="fab" class="fab" title="Add customer">
+    <svg width="22" height="22"><use href="#i-plus"/></svg>
+  </button>
+
+  <!-- Bottom navigation -->
+  <nav class="bottom-nav">
+    <button data-view="dashboard" class="active">
+      <svg width="20" height="20"><use href="#i-home"/></svg><span>Home</span>
+    </button>
+    <button data-view="customers">
+      <svg width="20" height="20"><use href="#i-users"/></svg><span>Customers</span>
+    </button>
+    <button data-view="form">
+      <svg width="20" height="20"><use href="#i-plus"/></svg><span>Add</span>
+    </button>
+    <button data-view="settings">
+      <svg width="20" height="20"><use href="#i-settings"/></svg><span>Settings</span>
+    </button>
+  </nav>
+</div>
+
+<script src="app.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' })
+      .then(reg => reg.update())
+      .catch(console.error);
+  }
+</script>
+</body>
+</html>
